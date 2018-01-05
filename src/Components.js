@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Button, Card } from "react-mdl";
 import "./App.css";
 
-export function Header() {
+export function Header({ user, onSignIn, onSignOut }) {
   return (
     <div className="header">
       <h2>KG Lunch Review</h2>
@@ -10,14 +10,32 @@ export function Header() {
         Filter
       </Button>
       <div className="user-container" id="user-container">
-        <div className="user-pic" id="user-pic" />
-        <div className="user-name" id="user-name" />
-        <Button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-          Sign-out
-        </Button>
-        <Button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
-          <i className="material-icons">account_circle</i>Sign-in with Google
-        </Button>
+        {user ? (
+          <div className="user-details">
+            <div
+              className="user-pic"
+              style={{ backgroundImage: "url(" + user.photoURL + ")" }}
+            />
+            <div className="user-name" id="user-name">
+              {user.displayName}
+            </div>
+          </div>
+        ) : null}
+        {user ? (
+          <Button
+            onClick={onSignOut}
+            className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white"
+          >
+            Sign-out
+          </Button>
+        ) : (
+          <Button
+            onClick={onSignIn}
+            className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white"
+          >
+            <i className="material-icons">account_circle</i>Sign-in with Google
+          </Button>
+        )}
       </div>
     </div>
   );

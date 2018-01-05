@@ -26,6 +26,10 @@ body {
   font-weight: normal;
 }
 
+.user-details {
+  display: flex;
+}
+
 .user-container {
   position: absolute;
   display: flex;
