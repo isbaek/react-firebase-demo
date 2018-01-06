@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, Card } from "react-mdl";
+import StarRating from "react-star-rating";
 import "./App.css";
 
 export function Header({ user, onSignIn, onSignOut }) {
@@ -41,16 +42,36 @@ export function Header({ user, onSignIn, onSignOut }) {
   );
 }
 
-export function RestaurantCard({ category, price }) {
+export function RestaurantCard({ data }) {
   return (
-    <div className="mdl-card-square mdl-card mdl-shadow--2dp">
-      <div className="mdl-card__title mdl-card--expand" />
+    <div className="restaurant-card mdl-card-square mdl-card mdl-shadow--2dp">
+      <div
+        className="mdl-card__title mdl-card--expand"
+        style={{
+          backgroundImage: `url(${data.photo})`,
+          backgroundSize: "cover",
+          overflow: "hidden"
+        }}
+      />
       <div className="mdl-card__supporting-text">
-        {category}
+        {data.name}
         <span> ● </span>
-        {price}
+        {data.category}
+        <span className="price">
+          {data.price === 1 && "$"}
+          {data.price === 2 && "$$"}
+          {data.price === 3 && "$$$"}
+          {data.price === 4 && "$$$$"}
+        </span>
       </div>
       <div className="mdl-card__actions mdl-card--border">
+        <div className="star-input">
+          <i className="material-icons">star_border</i>
+          <i className="material-icons">star_border</i>
+          <i className="material-icons">star_border</i>
+          <i className="material-icons">star_border</i>
+          <i className="material-icons">star_border</i>
+        </div>
         <a className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
           Review
         </a>

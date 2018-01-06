@@ -35,9 +35,10 @@ function getRandomItem(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function restaurantObject() {
+export default function restaurantModel() {
   const photoID = Math.floor(Math.random() * 22) + 1;
   return {
+    id: Math.random() * 213,
     name: getRandomItem(LUNCH_DATA.words),
     category: getRandomItem(LUNCH_DATA.categories),
     price: Math.floor(Math.random() * 4) + 1,

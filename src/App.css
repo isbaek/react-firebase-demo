@@ -59,25 +59,40 @@ body {
   padding-left: 20px;
   color: white;
 }
-
+.restaurant-card {
+  margin-bottom: 50px;
+  min-width: 200px;
+  height: 250px;
+}
 .mdl-card-square .mdl-card {
-  width: 320px;
-  height: 320px;
+  margin-bottom: 10px;
 }
 .mdl-card-square > .mdl-card__title {
   color: #fff;
 }
 
-.body {
-  margin-top: 20px;
+.mdl-card-square > .mdl-card__actions {
   display: flex;
-  flex-flow: column wrap;
-  align-items: center;
-  justify-content: center;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.mdl-card__supporting-text .price {
+  float: right;
+}
+.body {
+  box-sizing: border-box;
+  padding: 30px 80px;
+  height: calc(100vh - 80px);
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
 }
 
 .review-card {
   width: 200px;
+  box-sizing: border-box;
 }
 
 .review-card .review-card__header {
@@ -130,4 +145,8 @@ body {
   border-width: 1px 0px 1px 0px;
   padding: 10px;
   background-color: #f2f2f2;
+}
+
+.star-input i {
+  color: #fcb13e;
 }
