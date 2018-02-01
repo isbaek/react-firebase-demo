@@ -1,15 +1,12 @@
 import React, { Component } from "react";
 import { Button, Card } from "react-mdl";
-import StarRating from "react-star-rating";
+import ReactStars from "react-stars";
 import "./App.css";
 
 export function Header({ user, onSignIn, onSignOut }) {
   return (
     <div className="header">
       <h2>KG Lunch Review</h2>
-      <Button className="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--accent">
-        Filter
-      </Button>
       <div className="user-container" id="user-container">
         {user ? (
           <div className="user-details">
@@ -42,7 +39,7 @@ export function Header({ user, onSignIn, onSignOut }) {
   );
 }
 
-export function RestaurantCard({ data }) {
+export function RestaurantCard({ data, onReviewClick }) {
   return (
     <div className="restaurant-card mdl-card-square mdl-card mdl-shadow--2dp">
       <div
@@ -66,13 +63,20 @@ export function RestaurantCard({ data }) {
       </div>
       <div className="mdl-card__actions mdl-card--border">
         <div className="star-input">
-          <i className="material-icons">star_border</i>
-          <i className="material-icons">star_border</i>
-          <i className="material-icons">star_border</i>
-          <i className="material-icons">star_border</i>
-          <i className="material-icons">star_border</i>
+          <ReactStars
+            count={5}
+            value={data.avgRating}
+            size={24}
+            color2={"#ffd700"}
+            color1={"#ccc"}
+            edit={false}
+            half={false}
+          />
         </div>
-        <a className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+        <a
+          className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+          onClick={() => onReviewClick(data.key)}
+        >
           Review
         </a>
       </div>
@@ -80,48 +84,58 @@ export function RestaurantCard({ data }) {
   );
 }
 
-export function UserReview() {
+export function UserReview({ users, selectedData, onSave, onClose }) {
   return (
     <div className="review-card">
-      <div className="review max_width_600">
+      <div className="review-card__inner">
+        <span className="light">{selectedData.name}</span>
         <div className="review-card__header">
-          <div className="review-card__author">
-            <span className="light" data-fir-content="userName">
-              fsadfds
-            </span>
-          </div>
-          <div className="review-card__rating" />
+          {users &&
+            users.map(u => {
+              <div>
+                <span
+                  className="user-pic"
+                  style={{ backgroundImage: "url(" + u.photoURL + ")" }}
+                />
+                <span className="user-name" id="user-name">
+                  {u.displayName}
+                </span>
+                <div>{u.review}</div>
+              </div>;
+            })}
         </div>
-        <div data-fir-content="review-card__text">sdfadsf</div>
+        <div className="review-textarea">
+          <section className="review-textarea__body">
+            <div className="star-input">
+              <ReactStars
+                count={5}
+                value={0}
+                size={24}
+                color2={"#ffd700"}
+                color1={"#ccc"}
+                half={false}
+              />
+            </div>
+            <textarea id="text" />
+          </section>
+          <footer className="review-textarea__footer">
+            <Button
+              type="button"
+              className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+              onClick={() => onClose(selectedData.key)}
+            >
+              Close
+            </Button>
+            <Button
+              type="button"
+              className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+              onClick={onSave}
+            >
+              Save
+            </Button>
+          </footer>
+        </div>
       </div>
-    </div>
-  );
-}
-
-export function WriteReview() {
-  return (
-    <div className="review-textarea">
-      <header className="review-textarea__header">
-        <h2 className="review-textarea__header__title">Add a Review</h2>
-      </header>
-      <section className="review-textarea__body">
-        <div className="star-input">
-          <i className="material-icons">star_border</i>
-          <i className="material-icons">star_border</i>
-          <i className="material-icons">star_border</i>
-          <i className="material-icons">star_border</i>
-          <i className="material-icons">star_border</i>
-        </div>
-        <textarea id="text" />
-      </section>
-      <footer className="review-textarea__footer">
-        <Button
-          type="button"
-          className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-        >
-          Save
-        </Button>
-      </footer>
     </div>
   );
 }

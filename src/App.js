@@ -6,7 +6,7 @@ import * as firebase from "firebase";
 import "firebase/firestore";
 import firebaseApp from "./firebase";
 
-import { Header, RestaurantCard, UserReview, WriteReview } from "./Components";
+import { Header, RestaurantCard, UserReview } from "./Components";
 import restaurantModel from "./Data";
 
 class App extends Component {
@@ -25,7 +25,8 @@ class App extends Component {
   state = {
     user: null,
     showData: false,
-    data: null
+    data: null,
+    showReview: []
   };
 
   componentDidMount() {
@@ -85,9 +86,23 @@ class App extends Component {
     this.setState({ data: restos });
   };
 
+  // Review click handlers
+  onReviewClick = id => {
+    const { showReview } = this.state;
+    showReview[id] = true;
+    this.setState({ showReview });
+  };
+
+  onReviewClose = id => {
+    const { showReview } = this.state;
+    showReview[id] = false;
+    this.setState({ showReview });
+  };
+
   render() {
-    const { data } = this.state;
+    const { data, showReview } = this.state;
     console.log(data);
+    console.log(showReview);
     return (
       <div className="App">
         <Header
@@ -102,7 +117,24 @@ class App extends Component {
               onClick={this.addAllRestaurants}
             />
           ) : (
-            data.map((v, idx) => <RestaurantCard key={idx} data={v} />)
+            data.map((v, idx) => {
+              return (
+                <div>
+                  <RestaurantCard
+                    key={idx}
+                    data={v}
+                    onReviewClick={id => this.onReviewClick(id)}
+                  />
+                  {showReview[v.key] ? (
+                    <UserReview
+                      key={v.key}
+                      selectedData={v}
+                      onClose={id => this.onReviewClose(id)}
+                    />
+                  ) : null}
+                </div>
+              );
+            })
           )}
         </div>
       </div>
