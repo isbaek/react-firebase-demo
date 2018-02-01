@@ -19,6 +19,7 @@ class App extends Component {
     // Listen for auth state changes !
     this.auth.onAuthStateChanged(user => this.setState({ user }));
 
+    // Database
     this.database = firebase.firestore().collection("kg-lunch");
   }
 
@@ -26,7 +27,10 @@ class App extends Component {
     user: null,
     showData: false,
     data: null,
-    showReview: []
+    showReview: [],
+    rating: 0,
+    text: "",
+    userReviews: null
   };
 
   componentDidMount() {
@@ -86,23 +90,77 @@ class App extends Component {
     this.setState({ data: restos });
   };
 
+  getUserRatings = restaurantId => {
+    const query = this.database.doc(restaurantId).collection("ratings");
+    const users = [];
+    query.onSnapshot(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        const { rating, text, userName } = doc.data();
+        users.push({
+          key: doc.id,
+          rating,
+          text,
+          userName
+        });
+      });
+      this.setState({ userReviews: users });
+    });
+  };
+
   // Review click handlers
   onReviewClick = id => {
     const { showReview } = this.state;
     showReview[id] = true;
+    this.getUserRatings(id);
     this.setState({ showReview });
   };
 
   onReviewClose = id => {
     const { showReview } = this.state;
     showReview[id] = false;
-    this.setState({ showReview });
+    this.setState({ showReview, rating: 0, text: "" });
+  };
+
+  /* RATING */
+  onReviewSave = id => {
+    const { rating, text } = this.state;
+    const document = this.database.doc(id); // Sub collection, associated with the restaurant ID
+
+    this.setState({ rating: 0, text: "" });
+    this.getUserRatings(id);
+
+    return document
+      .collection("ratings")
+      .add({
+        rating,
+        text,
+        userName: this.state.user.displayName,
+        timestamp: new Date(),
+        userId: this.state.user.uid
+      })
+      .then(() => {
+        return firebase.firestore().runTransaction(transaction => {
+          //  a transaction is a set of read and write operations on one or more documents.
+          return transaction.get(document).then(doc => {
+            const data = doc.data();
+
+            let newAverage =
+              (data.numRatings * data.avgRating + rating) /
+              (data.numRatings + 1);
+
+            // Just updating the num ratings and avg ratings
+            return transaction.update(document, {
+              numRatings: data.numRatings + 1,
+              avgRating: newAverage
+            });
+          });
+        });
+      });
   };
 
   render() {
-    const { data, showReview } = this.state;
-    console.log(data);
-    console.log(showReview);
+    const { data, showReview, text, rating, user, userReviews } = this.state;
+
     return (
       <div className="App">
         <Header
@@ -125,11 +183,19 @@ class App extends Component {
                     data={v}
                     onReviewClick={id => this.onReviewClick(id)}
                   />
-                  {showReview[v.key] ? (
+                  {showReview[v.key] && userReviews ? (
                     <UserReview
                       key={v.key}
                       selectedData={v}
+                      users={userReviews}
+                      text={text}
+                      rating={rating}
+                      onTextChange={e =>
+                        this.setState({ text: e.target.value })
+                      }
                       onClose={id => this.onReviewClose(id)}
+                      onSave={id => this.onReviewSave(id)}
+                      onRate={rating => this.setState({ rating })}
                     />
                   ) : null}
                 </div>

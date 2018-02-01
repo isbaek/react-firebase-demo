@@ -72,6 +72,7 @@ export function RestaurantCard({ data, onReviewClick }) {
             edit={false}
             half={false}
           />
+          {data.numRatings === 0 ? null : data.numRatings}
         </div>
         <a
           className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
@@ -84,39 +85,42 @@ export function RestaurantCard({ data, onReviewClick }) {
   );
 }
 
-export function UserReview({ users, selectedData, onSave, onClose }) {
+export function UserReview({
+  users,
+  text,
+  rating,
+  selectedData,
+  onSave,
+  onClose,
+  onRate,
+  onTextChange
+}) {
   return (
     <div className="review-card">
       <div className="review-card__inner">
         <span className="light">{selectedData.name}</span>
-        <div className="review-card__header">
-          {users &&
-            users.map(u => {
-              <div>
-                <span
-                  className="user-pic"
-                  style={{ backgroundImage: "url(" + u.photoURL + ")" }}
-                />
-                <span className="user-name" id="user-name">
-                  {u.displayName}
-                </span>
-                <div>{u.review}</div>
-              </div>;
-            })}
+
+        <div>
+          {users.map((u, idx) => {
+            <div key={idx}>
+              <p>{u.userName} </p>
+            </div>;
+          })}
         </div>
         <div className="review-textarea">
           <section className="review-textarea__body">
             <div className="star-input">
               <ReactStars
                 count={5}
-                value={0}
+                value={rating}
                 size={24}
                 color2={"#ffd700"}
                 color1={"#ccc"}
                 half={false}
+                onChange={newRate => onRate(newRate)}
               />
             </div>
-            <textarea id="text" />
+            <textarea id="text" value={text} onChange={e => onTextChange(e)} />
           </section>
           <footer className="review-textarea__footer">
             <Button
@@ -129,7 +133,7 @@ export function UserReview({ users, selectedData, onSave, onClose }) {
             <Button
               type="button"
               className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-              onClick={onSave}
+              onClick={() => onSave(selectedData.key)}
             >
               Save
             </Button>
